@@ -8,6 +8,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import sys
 
 #randomly taken values of pixels for the size of star.
 FOVx=FOVy=15
