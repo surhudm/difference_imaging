@@ -1,5 +1,11 @@
+'''
+There is always a place for possibilities
+And there is definitely place to improve this program.
+'''
+import matplotlib.pyplot as plt
 import numpy as np
 import pylab as pl
+import math
 
 # Create a routine which will return an array with an image of a star at a
 # given location given its magnitude, position and size of the PSF
@@ -38,6 +44,35 @@ def get_star(xx, yy, mag, sigma, Nx, Ny, fluxmag0, skymag_per_pixelsq=0):
     return arr
 
 
+#function for convolution kernel generation.
+def kernel_con(FOVx, FOVy,  sig1, sig2):
+    kernel= np.zeros((FOVx,FOVy))
+    x0=(FOVx-1)/2 
+    y0=(FOVy-1)/2
+
+    sig=math.sqrt((sig1**2-sig2**2))
+    for xi in range(FOVx):
+        for yi in range(FOVy):
+	    #formula of a 2D gauss distribution function. 
+            k=1/(2*np.pi*math.pow(sig,2))
+            g=math.exp(-1*(math.pow((xi-x0),2)+math.pow((yi-y0),2))/(2*math.pow(sig,2)))
+	    #multiplying probability to the total outcomes that is the total flux of the star of magnitude m.
+            kernel[xi][yi]=g*k
+    return (kernel)
+
+
+#To plot the array of (in grey or coloured) image.
+def myplot(arr, fname, vmin, vmax, i, can_be_negative=False):
+    ax = plt.subplot(111)
+    if can_be_negative:
+        im = ax.imshow(arr, origin="bottom", cmap="PuOr_r", vmin=vmin, vmax=vmax)
+    else:
+        im = ax.imshow(arr, origin="bottom", cmap="Greys_r", vmin=vmin, vmax=vmax)
+    pl.colorbar(im)
+    ax.text(100., 160., "Time= %d (hour)" % (i), color="r")
+    plt.savefig(fname)
+    plt.clf()
+
 if __name__ == "__main__":
     xxarr = np.array([50, 40, 30])
     yyarr = np.array([50, 50, 50])
@@ -50,3 +85,5 @@ if __name__ == "__main__":
     pl.colorbar(im)
 
     pl.savefig("Fig.pdf")
+
+
